@@ -1,7 +1,6 @@
-(* geo-located objects *)
 unit CastleGIS;
 
-{$INCLUDE compilerconfig.inc}
+{$mode objfpc}{$H+}
 
 interface
 
@@ -20,6 +19,10 @@ type
     FHorizontalError, FDepthError: extended;
     procedure CacheLongtitudeLatitude;
   public
+    procedure ParseLatitude(const aData: string);
+    procedure ParseLongtitude(const aData: string);
+    procedure ParseDepth(const aData: string);
+  public
     function isWithinLatitude(const aValue1, aValue2: extended): boolean;
     function isWithinLongtitude(const aValue1, aValue2: extended): boolean;
     function isWithinDepth(const aValue1, aValue2: extended): boolean;
@@ -32,6 +35,8 @@ type
   strict protected
     const FTimeError = 30/60/60/24; {30 seconds}
   public
+    //procedure ParseTime(const aData: string);
+  public
     FTime: TDateTime;
     FEnergy: extended; {in Joules}
 //    property Time: TDateTime read FTime;
@@ -39,12 +44,15 @@ type
     function isWithinTime(const aTime1, aTime2: TDateTime): boolean;
   end;
 
+
 type
   TGeoList = specialize TObjectList<TGeoObject>;
   TTimedList = specialize TObjectList<TTimedObject>;
 
 
 implementation
+uses
+  SysUtils;
 
 {------------------- Time ------------------------------------}
 
@@ -128,6 +136,24 @@ begin
   end;
 end;
 
+procedure TGeoObject.ParseLatitude(const aData: string);
+begin
+  FLatitude := aData.ToExtended;
+end;
+
+procedure TGeoObject.ParseLongtitude(const aData: string);
+begin
+  FLongtitude := aData.ToExtended;
+end;
+
+procedure TGeoObject.ParseDepth(const aData: string);
+begin
+  if aData <> '' then
+    FDepth := aData.ToExtended
+  else
+    FDepth := 0;
+end;
+
 {------------------- Geo ------------------------------------}
 
 function TGeoObject.Distance(aLongtitude, aLatitude: extended): extended;
@@ -178,10 +204,6 @@ begin
   Longtitude_to_km_ratio := ((LngCoef1 * cos(1 * FLatitude/180) +
     LngCoef3 * cos(3 * FLatitude/180) + LngCoef5 * cos(5 * FLatitude/180)))/1000;
 end;
-
-
-
-
 
 end.
 
