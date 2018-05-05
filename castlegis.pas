@@ -345,6 +345,17 @@ end;
 constructor TBaseMap.Create(const aURL: string);
 begin
   MapImage := TGLImage.Create(aURL, true);
+
+  //default image span is (0,0) - (image.Width, image.Height)
+  ReferencePointImage[rpBottomLeft][0] := 0;
+  ReferencePointImage[rpBottomLeft][1] := 0;
+  ReferencePointImage[rpTopRight][0] := Mapimage.Width;
+  ReferencePointImage[rpTopRight][1] := Mapimage.Height;
+  //default geographic span is the whole Earth
+  ReferencePointWGS84[rpBottomLeft][0] := -180;
+  ReferencePointWGS84[rpBottomLeft][1] := -90;
+  ReferencePointWGS84[rpTopRight][0] := 180;
+  ReferencePointWGS84[rpTopRight][1] := 90;
 end;
 
 destructor TBaseMap.Destroy;
@@ -360,9 +371,14 @@ begin
   ReferencePointWGS84: array [TReferencePointType] of TVector2;}
   {(const X, Y, DrawWidth, DrawHeight: Single;
       const ImageX, ImageY, ImageWidth, ImageHeight: Single);}
-  MapImage.Draw(Container.ReferencePointImage[rpBottomLeft][0],
+  MapImage.Draw(
+    //draw into containter box
+    Container.ReferencePointImage[rpBottomLeft][0],
     Container.ReferencePointImage[rpBottomLeft][1],
-    Container.ImageWidth, Container.ImageHeight);
+    Container.ImageWidth, Container.ImageHeight
+    //draw from MapImage
+
+    );
 end;
 
 end.
