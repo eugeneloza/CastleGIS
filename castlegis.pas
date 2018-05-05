@@ -136,9 +136,9 @@ uses
 function TTimedObject.isTime(const aTime: TDateTime): boolean;
 begin
   if (FTime + FTimeError >= aTime) and (FTime - FTimeError <= aTime) then
-    Result := True
+    Result := true
   else
-    Result := False;
+    Result := false;
 end;
 
 function TTimedObject.isWithinTime(const aTime1, aTime2: TDateTime): boolean;
@@ -146,16 +146,16 @@ begin
   if aTime2 > aTime1 then
   begin
     if (FTime + FTimeError >= aTime1) and (FTime - FTimeError <= aTime2) then
-      Result := True
+      Result := true
     else
-      Result := False;
+      Result := false;
   end
   else
   begin
     if (FTime + FTimeError >= aTime2) and (FTime - FTimeError <= aTime1) then
-      Result := False
+      Result := false
     else
-      Result := True;
+      Result := true;
   end;
 end;
 
@@ -164,16 +164,16 @@ begin
   if aValue2 > aValue1 then
   begin
     if (FDepth + FDepthError >= aValue1) and (FDepth - FDepthError <= aValue2) then
-      Result := True
+      Result := true
     else
-      Result := False;
+      Result := false;
   end
   else
   begin
     if (FDepth + FDepthError >= aValue2) and (FDepth - FDepthError <= aValue1) then
-      Result := True
+      Result := true
     else
-      Result := False;
+      Result := false;
   end;
 end;
 
@@ -182,16 +182,16 @@ begin
   if aValue2 > aValue1 then
   begin
     if (FLatitude + FHorizontalError/Latitude_to_km_ratio >= aValue1) and (FLatitude - FHorizontalError/Latitude_to_km_ratio <= aValue2) then
-      Result := True
+      Result := true
     else
-      Result := False;
+      Result := false;
   end
   else
   begin
     if (FLatitude + FHorizontalError/Latitude_to_km_ratio >= aValue2) and (FLatitude - FHorizontalError/Latitude_to_km_ratio <= aValue1) then
-      Result := True
+      Result := true
     else
-      Result := False;
+      Result := false;
   end;
 end;
 
@@ -200,16 +200,16 @@ begin
   if aValue2 > aValue1 then
   begin
     if (FLongtitude + FHorizontalError/Latitude_to_km_ratio >= aValue1) and (FLongtitude - FHorizontalError/Latitude_to_km_ratio <= aValue2) then
-      Result := True
+      Result := true
     else
-      Result := False;
+      Result := false;
   end
   else
   begin
     if (FLongtitude + FHorizontalError/Latitude_to_km_ratio >= aValue2) and (FLongtitude - FHorizontalError/Latitude_to_km_ratio <= aValue1) then
-      Result := True
+      Result := true
     else
-      Result := False;
+      Result := false;
   end;
 end;
 
@@ -238,15 +238,16 @@ var
   LngDiff: single;
 begin
   LngDiff := aLongtitude - Self.FLongtitude;
-  if LngDiff > 180 then
+  while LngDiff > 180 do
     LngDiff -= 360
-  else
-    if LngDiff < -180 then
-      LngDiff += 360;
+  while LngDiff < -180 do
+    LngDiff += 360;
+
   Result := sqr((aLatitude - Self.FLatitude) * Latitude_to_km_ratio)  +
     sqr((LngDiff) * Longtitude_to_km_ratio);
-  if True {Result < %n^2} then
-    Result := sqrt(Result)
+
+  if true {Result < %n^2} then
+    Result := Sqrt(Result)
   else
     Result := AccurateDistance(aLongtitude, aLatitude);
 end;
@@ -258,6 +259,7 @@ end;
 
 function TGeoObject.AccurateDistance(aLongtitude, aLatitude: single): single;
 begin
+  //https://en.wikipedia.org/wiki/Geographical_distance
   {$WARNING todo}
   Result := 0;
 end;
