@@ -79,6 +79,9 @@ type
     ReferencePointImage: array [TReferencePointType] of TVector2;
     ReferencePointWGS84: array [TReferencePointType] of TVector2;
 
+    { Default geographic span is the whole Earth }
+    procedure DefaultGeoReference;
+
     { Useful functions to automate other routines
       raise errors in case the TWGS84Rectangle is not valid }
     function ImageWidth: single;
@@ -105,6 +108,8 @@ type
     { Draw the Base map scaled against TWGS84Rectangle
       Both BaseMap and Container must be correctly geo-aligned }
     procedure Draw(Container: TWGS84Rectangle);
+    { Default image span is (0,0) - (MapImage.Width, MapImage.Height) }
+    procedure DefaultMapReference;
   public
     constructor Create(const aURL: string);
     destructor Destroy; override;
@@ -339,23 +344,32 @@ begin
   Result := Vector2(XToLongtitude(aXY[0]), YToLatitude(aXY[1]));
 end;
 
+procedure TWGS84Rectangle.DefaultGeoReference;
+begin
+  ReferencePointWGS84[rpBottomLeft][0] := -180;
+  ReferencePointWGS84[rpBottomLeft][1] := -90;
+  ReferencePointWGS84[rpTopRight][0] := 180;
+  ReferencePointWGS84[rpTopRight][1] := 90;
+end;
 
 
+
+procedure TBaseMap.DefaultMapReference;
+begin
+  if MapImage = nil then
+    raise Exception.Create('Error: TBaseMap.DefaultMapReference requires loaded image to work');
+  ReferencePointImage[rpBottomLeft][0] := 0;
+  ReferencePointImage[rpBottomLeft][1] := 0;
+  ReferencePointImage[rpTopRight][0] := MapImage.Width;
+  ReferencePointImage[rpTopRight][1] := MapImage.Height;
+end;
 
 constructor TBaseMap.Create(const aURL: string);
 begin
   MapImage := TGLImage.Create(aURL, true);
 
-  //default image span is (0,0) - (image.Width, image.Height)
-  ReferencePointImage[rpBottomLeft][0] := 0;
-  ReferencePointImage[rpBottomLeft][1] := 0;
-  ReferencePointImage[rpTopRight][0] := Mapimage.Width;
-  ReferencePointImage[rpTopRight][1] := Mapimage.Height;
-  //default geographic span is the whole Earth
-  ReferencePointWGS84[rpBottomLeft][0] := -180;
-  ReferencePointWGS84[rpBottomLeft][1] := -90;
-  ReferencePointWGS84[rpTopRight][0] := 180;
-  ReferencePointWGS84[rpTopRight][1] := 90;
+  DefaultGeoReference;
+  DefaultMapReference;
 end;
 
 destructor TBaseMap.Destroy;
