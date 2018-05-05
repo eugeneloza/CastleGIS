@@ -29,24 +29,24 @@ uses
 type
   TGeoObject = class(TObject)
   strict protected
-    Latitude_to_km_ratio, Longtitude_to_km_ratio: extended;
+    Latitude_to_km_ratio, Longtitude_to_km_ratio: single;
 
     { returns distance in km to lng,lat point }
-    function AccurateDistance(aLongtitude, aLatitude: extended): extended;
+    function AccurateDistance(aLongtitude, aLatitude: single): single;
   public
-    FDepth, FLatitude, FLongtitude: extended;
-    FHorizontalError, FDepthError: extended;
+    FDepth, FLatitude, FLongtitude: single;
+    FHorizontalError, FDepthError: single;
     procedure CacheLongtitudeLatitude;
   public
     procedure ParseLatitude(const aData: string);
     procedure ParseLongtitude(const aData: string);
     procedure ParseDepth(const aData: string);
   public
-    function isWithinLatitude(const aValue1, aValue2: extended): boolean;
-    function isWithinLongtitude(const aValue1, aValue2: extended): boolean;
-    function isWithinDepth(const aValue1, aValue2: extended): boolean;
-    function Distance(aLongtitude, aLatitude: extended): extended;
-    function Distance(const aObj: TGeoObject): extended;
+    function isWithinLatitude(const aValue1, aValue2: single): boolean;
+    function isWithinLongtitude(const aValue1, aValue2: single): boolean;
+    function isWithinDepth(const aValue1, aValue2: single): boolean;
+    function Distance(aLongtitude, aLatitude: single): single;
+    function Distance(const aObj: TGeoObject): single;
   end;
 
 type
@@ -57,7 +57,7 @@ type
     //procedure ParseTime(const aData: string);
   public
     FTime: TDateTime;
-    FEnergy: extended; {in Joules}
+    FEnergy: single; {in Joules}
 //    property Time: TDateTime read FTime;
     function isTime(const aTime: TDateTime): boolean;
     function isWithinTime(const aTime1, aTime2: TDateTime): boolean;
@@ -159,7 +159,7 @@ begin
   end;
 end;
 
-function TGeoObject.isWithinDepth(const aValue1, aValue2: extended): boolean;
+function TGeoObject.isWithinDepth(const aValue1, aValue2: single): boolean;
 begin
   if aValue2 > aValue1 then
   begin
@@ -177,7 +177,7 @@ begin
   end;
 end;
 
-function TGeoObject.isWithinLatitude(const aValue1, aValue2: extended): boolean;
+function TGeoObject.isWithinLatitude(const aValue1, aValue2: single): boolean;
 begin
   if aValue2 > aValue1 then
   begin
@@ -195,7 +195,7 @@ begin
   end;
 end;
 
-function TGeoObject.isWithinLongtitude(const aValue1, aValue2: extended): boolean;
+function TGeoObject.isWithinLongtitude(const aValue1, aValue2: single): boolean;
 begin
   if aValue2 > aValue1 then
   begin
@@ -215,27 +215,27 @@ end;
 
 procedure TGeoObject.ParseLatitude(const aData: string);
 begin
-  FLatitude := aData.ToExtended;
+  FLatitude := aData.Tosingle;
 end;
 
 procedure TGeoObject.ParseLongtitude(const aData: string);
 begin
-  FLongtitude := aData.ToExtended;
+  FLongtitude := aData.Tosingle;
 end;
 
 procedure TGeoObject.ParseDepth(const aData: string);
 begin
   if aData <> '' then
-    FDepth := aData.ToExtended
+    FDepth := aData.Tosingle
   else
     FDepth := 0;
 end;
 
 {------------------- Geo ------------------------------------}
 
-function TGeoObject.Distance(aLongtitude, aLatitude: extended): extended;
+function TGeoObject.Distance(aLongtitude, aLatitude: single): single;
 var
-  LngDiff: extended;
+  LngDiff: single;
 begin
   LngDiff := aLongtitude - Self.FLongtitude;
   if LngDiff > 180 then
@@ -251,12 +251,12 @@ begin
     Result := AccurateDistance(aLongtitude, aLatitude);
 end;
 
-function TGeoObject.Distance(const aObj: TGeoObject): extended;
+function TGeoObject.Distance(const aObj: TGeoObject): single;
 begin
   Result := Self.Distance(aObj.FLongtitude, aObj.FLatitude);
 end;
 
-function TGeoObject.AccurateDistance(aLongtitude, aLatitude: extended): extended;
+function TGeoObject.AccurateDistance(aLongtitude, aLatitude: single): single;
 begin
   {$WARNING todo}
   Result := 0;
