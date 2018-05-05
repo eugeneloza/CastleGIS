@@ -66,14 +66,21 @@ type
   TReferencePointType = (rpBottomLeft, rpTopRight);
 
 type
+  { a basic rectangle, that provides a link between geographical coordinates
+    and on-screen coordinates (pixels) }
   TWGS84Rectangle = class(TObject)
   public
     { Link between coordinates and WGS84 geographical coordinates
       [rpBottomLeft] should be Bottom-Left coordinate of the image and
       [rpTopRight] should be Top-Right coordinate of the image
-      Otherwise the image will be drawn inversed }
+      Otherwise the image will be drawn inversed
+      These are not mandatorily the cornerpoints of the image, just two points
+      that have a valid relation between pixels and geographical coordinates }
     ReferencePointImage: array [TReferencePointType] of TVector2;
     ReferencePointWGS84: array [TReferencePointType] of TVector2;
+
+    { Useful functions to automate other routines
+      raise errors in case the TWGS84Rectangle is not valid }
     function ImageWidth: single;
     function ImageHeight: single;
     function GeoWidth: single;
