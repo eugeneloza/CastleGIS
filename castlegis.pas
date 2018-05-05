@@ -65,6 +65,10 @@ type
     function LongtitudeToX(const aLongtitude: single): integer;
     function LatitudeToY(const aLatitude: single): integer;
     function LngLatToXY(const aLngLat: TVector2): TVector2Integer;
+
+    function XToLongtitude(const aX: integer): single;
+    function YToLatitude(const aY: integer): single;
+    function XYToLngLat(const aXY: TVector2Integer): TVector2;
   end;
 
 type
@@ -279,7 +283,22 @@ begin
   Result := Vector2Integer(LongtitudeToX(aLngLat[0]), LatitudeToY(aLngLat[1]));
 end;
 
+function TWGS84Rectangle.XToLongtitude(const aX: integer): single;
+begin
+  Result := ReferencePointWGS84[rpBottomLeft][0] +
+    ((aX - ReferencePointImage[rpBottomLeft][0]) * GeoWidth / ImageWidth );
+end;
 
+function TWGS84Rectangle.YToLatitude(const aY: integer): single;
+begin
+  Result := ReferencePointWGS84[rpBottomLeft][1] +
+    ((aY - ReferencePointImage[rpBottomLeft][1]) * GeoHeight / ImageHeight );
+end;
+
+function TWGS84Rectangle.XYToLngLat(const aXY: TVector2Integer): TVector2;
+begin
+  Result := Vector2(XToLongtitude(aXY[0]), YToLatitude(aXY[1]));
+end;
 
 
 
