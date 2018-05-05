@@ -72,20 +72,22 @@ type
       [rpBottomLeft] should be Bottom-Left coordinate of the image and
       [rpTopRight] should be Top-Right coordinate of the image
       Otherwise the image will be drawn inversed }
-    ReferencePointImage: array [TReferencePointType] of TVector2Integer;
+    ReferencePointImage: array [TReferencePointType] of TVector2;
     ReferencePointWGS84: array [TReferencePointType] of TVector2;
-    function ImageWidth: integer;
-    function ImageHeight: integer;
+    function ImageWidth: single;
+    function ImageHeight: single;
     function GeoWidth: single;
     function GeoHeight: single;
 
-    function LongtitudeToX(const aLongtitude: single): integer;
-    function LatitudeToY(const aLatitude: single): integer;
-    function LngLatToXY(const aLngLat: TVector2): TVector2Integer;
+    { convert geographical coordinates to screen coordinates }
+    function LongtitudeToX(const aLongtitude: single): single;
+    function LatitudeToY(const aLatitude: single): single;
+    function LngLatToXY(const aLngLat: TVector2): TVector2;
 
-    function XToLongtitude(const aX: integer): single;
-    function YToLatitude(const aY: integer): single;
-    function XYToLngLat(const aXY: TVector2Integer): TVector2;
+    { convert screen coordinates to geographical coordinates }
+    function XToLongtitude(const aX: single): single;
+    function YToLatitude(const aY: single): single;
+    function XYToLngLat(const aXY: TVector2): TVector2;
   end;
 
 type
@@ -263,12 +265,12 @@ end;
 
 {=============== TBaseMap =========================}
 
-function TWGS84Rectangle.ImageWidth: integer;
+function TWGS84Rectangle.ImageWidth: single;
 begin
   Result := ReferencePointImage[rpTopRight][0] - ReferencePointImage[rpBottomLeft][0];
 end;
 
-function TWGS84Rectangle.ImageHeight: integer;
+function TWGS84Rectangle.ImageHeight: single;
 begin
   Result := ReferencePointImage[rpTopRight][1] - ReferencePointImage[rpBottomLeft][1];
 end;
@@ -283,36 +285,36 @@ begin
   Result := ReferencePointWGS84[rpTopRight][1] - ReferencePointWGS84[rpBottomLeft][1];
 end;
 
-function TWGS84Rectangle.LongtitudeToX(const aLongtitude: single): integer;
+function TWGS84Rectangle.LongtitudeToX(const aLongtitude: single): single;
 begin
   Result := ReferencePointImage[rpBottomLeft][0] +
-    Round((aLongtitude - ReferencePointWGS84[rpBottomLeft][0]) * ImageWidth / GeoWidth);
+    ((aLongtitude - ReferencePointWGS84[rpBottomLeft][0]) * ImageWidth / GeoWidth);
 end;
 
-function TWGS84Rectangle.LatitudeToY(const aLatitude: single): integer;
+function TWGS84Rectangle.LatitudeToY(const aLatitude: single): single;
 begin
   Result := ReferencePointImage[rpBottomLeft][1] +
-    Round((aLatitude - ReferencePointWGS84[rpBottomLeft][1]) * ImageHeight / GeoHeight);
+    ((aLatitude - ReferencePointWGS84[rpBottomLeft][1]) * ImageHeight / GeoHeight);
 end;
 
-function TWGS84Rectangle.LngLatToXY(const aLngLat: TVector2): TVector2Integer;
+function TWGS84Rectangle.LngLatToXY(const aLngLat: TVector2): TVector2;
 begin
-  Result := Vector2Integer(LongtitudeToX(aLngLat[0]), LatitudeToY(aLngLat[1]));
+  Result := Vector2(LongtitudeToX(aLngLat[0]), LatitudeToY(aLngLat[1]));
 end;
 
-function TWGS84Rectangle.XToLongtitude(const aX: integer): single;
+function TWGS84Rectangle.XToLongtitude(const aX: single): single;
 begin
   Result := ReferencePointWGS84[rpBottomLeft][0] +
     ((aX - ReferencePointImage[rpBottomLeft][0]) * GeoWidth / ImageWidth );
 end;
 
-function TWGS84Rectangle.YToLatitude(const aY: integer): single;
+function TWGS84Rectangle.YToLatitude(const aY: single): single;
 begin
   Result := ReferencePointWGS84[rpBottomLeft][1] +
     ((aY - ReferencePointImage[rpBottomLeft][1]) * GeoHeight / ImageHeight );
 end;
 
-function TWGS84Rectangle.XYToLngLat(const aXY: TVector2Integer): TVector2;
+function TWGS84Rectangle.XYToLngLat(const aXY: TVector2): TVector2;
 begin
   Result := Vector2(XToLongtitude(aXY[0]), YToLatitude(aXY[1]));
 end;
