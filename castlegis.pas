@@ -61,6 +61,10 @@ type
     function ImageHeight: integer;
     function GeoWidth: single;
     function GeoHeight: single;
+
+    function LongtitudeToX(const aLongtitude: single): integer;
+    function LatitudeToY(const aLatitude: single): integer;
+    function LngLatToXY(const aLngLat: TVector2): TVector2Integer;
   end;
 
 type
@@ -258,6 +262,26 @@ begin
   Result := ReferencePointWGS84[rpTopRight][1] - ReferencePointWGS84[rpBottomLeft][1];
 end;
 
+function TWGS84Rectangle.LongtitudeToX(const aLongtitude: single): integer;
+begin
+  Result := ReferencePointImage[rpBottomLeft][0] +
+    Round((aLongtitude - ReferencePointWGS84[rpBottomLeft][0]) * ImageWidth / GeoWidth);
+end;
+
+function TWGS84Rectangle.LatitudeToY(const aLatitude: single): integer;
+begin
+  Result := ReferencePointImage[rpBottomLeft][1] +
+    Round((aLatitude - ReferencePointWGS84[rpBottomLeft][1]) * ImageHeight / GeoHeight);
+end;
+
+function TWGS84Rectangle.LngLatToXY(const aLngLat: TVector2): TVector2Integer;
+begin
+  Result := Vector2Integer(LongtitudeToX(aLngLat[0]), LatitudeToY(aLngLat[1]));
+end;
+
+
+
+
 
 
 constructor TBaseMap.Create(const aURL: string);
@@ -278,8 +302,9 @@ begin
   ReferencePointWGS84: array [TReferencePointType] of TVector2;}
   {(const X, Y, DrawWidth, DrawHeight: Single;
       const ImageX, ImageY, ImageWidth, ImageHeight: Single);}
-  MapImage.Draw(Container.ReferencePointImage[rpBottomLeft][0], Container.ReferencePointImage[rpBottomLeft][1]);
-    // Container[rpTopRight][;//(Container.)
+  MapImage.Draw(Container.ReferencePointImage[rpBottomLeft][0],
+    Container.ReferencePointImage[rpBottomLeft][1],
+    Container.ImageWidth, Container.ImageHeight);
 end;
 
 end.
