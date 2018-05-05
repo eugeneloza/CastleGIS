@@ -2,7 +2,7 @@
 
 In short: GIS stands for Geographical Information System and enables manipulating sets of spatial points and objects.
 This is summary of efforts required for my scientific research. This includes different operations on set of GIS points like filtering, measuring distances, filtering duplicates, and rendering the final maps overlayed over base map.
-With hope that it will also be used for Castle Game Engine GIS - like applications. Yes, that's a game engine, it won't have fancy GIS features.
+With hope that it will also might be useful for Castle Game Engine GIS - like applications. Yes, that's a game engine, it doesn't need to have fancy GIS features.
 
 # What's the goal? (why)
 
