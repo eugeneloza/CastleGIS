@@ -268,21 +268,34 @@ end;
 function TWGS84Rectangle.ImageWidth: single;
 begin
   Result := ReferencePointImage[rpTopRight][0] - ReferencePointImage[rpBottomLeft][0];
+
+  //raise error in case the georeferencing is invalid, we'll get a division by zero anyway on the next step
+  if Result = 0 then
+    raise Exception.Create('Error: TWGS84Rectangle.ImageWidth = 0');
 end;
 
 function TWGS84Rectangle.ImageHeight: single;
 begin
   Result := ReferencePointImage[rpTopRight][1] - ReferencePointImage[rpBottomLeft][1];
+
+  if Result = 0 then
+    raise Exception.Create('Error: TWGS84Rectangle.ImageHeight = 0');
 end;
 
 function TWGS84Rectangle.GeoWidth: single;
 begin
   Result := ReferencePointWGS84[rpTopRight][0] - ReferencePointWGS84[rpBottomLeft][0];
+
+  if Result = 0 then
+    raise Exception.Create('Error: TWGS84Rectangle.GeoWidth = 0');
 end;
 
 function TWGS84Rectangle.GeoHeight: single;
 begin
   Result := ReferencePointWGS84[rpTopRight][1] - ReferencePointWGS84[rpBottomLeft][1];
+
+  if Result = 0 then
+    raise Exception.Create('Error: TWGS84Rectangle.GeoHeight = 0');
 end;
 
 function TWGS84Rectangle.LongtitudeToX(const aLongtitude: single): single;
