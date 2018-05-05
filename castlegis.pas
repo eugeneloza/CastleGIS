@@ -106,7 +106,8 @@ type
     MapImage: TGLImage;
   public
     { Draw the Base map scaled against TWGS84Rectangle
-      Both BaseMap and Container must be correctly geo-aligned }
+      Both BaseMap and Container must be correctly geo-aligned
+      Pay attention: there will be no drawing beyond Container.ReferencePointImage }
     procedure Draw(Container: TWGS84Rectangle);
     { Default image span is (0,0) - (MapImage.Width, MapImage.Height) }
     procedure DefaultMapReference;
@@ -379,19 +380,22 @@ begin
 end;
 
 procedure TBaseMap.Draw(Container: TWGS84Rectangle);
-//var
+var
+  x1, y1, x2, y2: single;
 begin
-{  ReferencePointImage: array [TReferencePointType] of TVector2Integer;
-  ReferencePointWGS84: array [TReferencePointType] of TVector2;}
-  {(const X, Y, DrawWidth, DrawHeight: Single;
-      const ImageX, ImageY, ImageWidth, ImageHeight: Single);}
+  //determine which part of the TBaseMap to draw into Container size
+  x1 := Self.LongtitudeToX(Container.ReferencePointWGS84[rpBottomLeft][0]);
+  y1 := Self.LatitudeToY(Container.ReferencePointWGS84[rpBottomLeft][1]);
+  x2 := Self.LongtitudeToX(Container.ReferencePointWGS84[rpTopRight][0]);
+  y2 := Self.LatitudeToY(Container.ReferencePointWGS84[rpTopRight][1]);
+
   MapImage.Draw(
     //draw into containter box
     Container.ReferencePointImage[rpBottomLeft][0],
     Container.ReferencePointImage[rpBottomLeft][1],
-    Container.ImageWidth, Container.ImageHeight
+    Container.ImageWidth, Container.ImageHeight,
     //draw from MapImage
-
+    x1, y1, x2 - x1, y2 - y1
     );
 end;
 
