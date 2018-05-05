@@ -57,6 +57,10 @@ type
       Otherwise the image will be drawn inversed }
     ReferencePointImage: array [TReferencePointType] of TVector2Integer;
     ReferencePointWGS84: array [TReferencePointType] of TVector2;
+    function ImageWidth: integer;
+    function ImageHeight: integer;
+    function GeoWidth: single;
+    function GeoHeight: single;
   end;
 
 type
@@ -234,6 +238,28 @@ end;
 
 {=============== TBaseMap =========================}
 
+function TWGS84Rectangle.ImageWidth: integer;
+begin
+  Result := ReferencePointImage[rpTopRight][0] - ReferencePointImage[rpBottomLeft][0];
+end;
+
+function TWGS84Rectangle.ImageHeight: integer;
+begin
+  Result := ReferencePointImage[rpTopRight][1] - ReferencePointImage[rpBottomLeft][1];
+end;
+
+function TWGS84Rectangle.GeoWidth: single;
+begin
+  Result := ReferencePointWGS84[rpTopRight][0] - ReferencePointWGS84[rpBottomLeft][0];
+end;
+
+function TWGS84Rectangle.GeoHeight: single;
+begin
+  Result := ReferencePointWGS84[rpTopRight][1] - ReferencePointWGS84[rpBottomLeft][1];
+end;
+
+
+
 constructor TBaseMap.Create(const aURL: string);
 begin
   MapImage := TGLImage.Create(aURL, true);
@@ -252,7 +278,8 @@ begin
   ReferencePointWGS84: array [TReferencePointType] of TVector2;}
   {(const X, Y, DrawWidth, DrawHeight: Single;
       const ImageX, ImageY, ImageWidth, ImageHeight: Single);}
-  MapImage.Draw;//()
+  MapImage.Draw(Container.ReferencePointImage[rpBottomLeft][0], Container.ReferencePointImage[rpBottomLeft][1]);
+    // Container[rpTopRight][;//(Container.)
 end;
 
 end.
