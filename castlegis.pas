@@ -5,6 +5,7 @@ unit CastleGIS;
 interface
 
 uses
+  CastleImages, CastleVectors, CastleGLImages,
   Generics.Collections;
 
 type
@@ -44,6 +45,22 @@ type
     function isWithinTime(const aTime1, aTime2: TDateTime): boolean;
   end;
 
+
+type
+  TBaseMap = class(TObject)
+  strict private
+    MapImage: TGLImage;
+  public
+    { Link between coordinates and WGS84 geographical coordinates
+      [0] should be Bottom-Left coordinate of the image and
+      [1] should be Top-Right coordinate of the image
+      Otherwise the image will be drawn inversed }
+    ReferencePointImage: array [0..1] of TVector2Integer;
+    ReferencePointWGS84: array [0..1] of TVector2;
+  public
+    constructor Create(const aURL: string);
+    destructor Destroy; override;
+  end;
 
 type
   TGeoList = specialize TObjectList<TGeoObject>;
@@ -203,6 +220,19 @@ begin
     LatCoef4 * cos(4 * FLatitude/180) + LatCoef6 * cos(6 * FLatitude/180)))/1000;
   Longtitude_to_km_ratio := ((LngCoef1 * cos(1 * FLatitude/180) +
     LngCoef3 * cos(3 * FLatitude/180) + LngCoef5 * cos(5 * FLatitude/180)))/1000;
+end;
+
+{=============== TBaseMap =========================}
+
+constructor TBaseMap.Create(const aURL: string);
+begin
+  MapImage := TGLImage.Create(aURL, true);
+end;
+
+destructor TBaseMap.Destroy;
+begin
+
+  inherited Destroy;
 end;
 
 end.
