@@ -13,7 +13,8 @@
   ----------------------------------------------------------------------------
 }
 
-{ Basic GIS operations on points and rendering of the base map }
+{ Basic GIS operations on points and rendering of the base map
+  Longtitude/Latitude is given in decimal degrees }
 
 unit CastleGIS;
 
@@ -98,6 +99,8 @@ type
     function XToLongtitude(const aX: single): single;
     function YToLatitude(const aY: single): single;
     function XYToLngLat(const aXY: TVector2): TVector2;
+
+    function CopyContainer: TWGS84Rectangle;
   end;
 
 type
@@ -107,7 +110,10 @@ type
   public
     { Draw the Base map scaled against TWGS84Rectangle
       Both BaseMap and Container must be correctly geo-aligned
-      Pay attention: there will be no drawing beyond Container.ReferencePointImage }
+      Pay attention: there will be no drawing beyond Container.ReferencePointImage
+      DrawCore just draws the map as is
+      Draw wraps the map into a cylinder at Latitude = plus-minus 180 deg.}
+    procedure DrawCore(Container: TWGS84Rectangle);
     procedure Draw(Container: TWGS84Rectangle);
     { Default image span is (0,0) - (MapImage.Width, MapImage.Height) }
     procedure DefaultMapReference;
@@ -353,6 +359,12 @@ begin
   ReferencePointWGS84[rpTopRight][1] := 90;
 end;
 
+function TWGS84Rectangle.CopyContainer: TWGS84Rectangle;
+begin
+  Result := TWGS84Rectangle.Create;
+  Result.ReferencePointWGS84 := ReferencePointWGS84;
+  Result.ReferencePointImage := ReferencePointImage;
+end;
 
 
 procedure TBaseMap.DefaultMapReference;
@@ -379,7 +391,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TBaseMap.Draw(Container: TWGS84Rectangle);
+procedure TBaseMap.DrawCore(Container: TWGS84Rectangle);
 var
   x1, y1, x2, y2: single;
 begin
@@ -397,6 +409,57 @@ begin
     //draw from MapImage
     x1, y1, x2 - x1, y2 - y1
     );
+end;
+
+procedure TBaseMap.Draw(Container: TWGS84Rectangle);
+var
+  c, c1, c2: TWGS84Rectangle;
+begin
+  { wrap the map into a cylinder - at this moment only once,
+    meaning the scale of the Container should not exceed the Earth equators several times
+    No wrapping of the coordinates is made }
+
+  c := Container.CopyContainer;
+
+  { Position container correctly }
+
+  //move the container from the left to have a left-point larger than -180 longtitude
+  while c.ReferencePointWGS84[rpBottomLeft][0] < -180 do
+  begin
+    c.ReferencePointWGS84[rpBottomLeft][0] := c.ReferencePointWGS84[rpBottomLeft][0] + 360;
+    c.ReferencePointWGS84[rpTopRight][0] := c.ReferencePointWGS84[rpTopRight][0] + 360;
+  end;
+  //move the container from the right to have a right-point smaller than 180+360 longtitude
+  while c.ReferencePointWGS84[rpTopRight][0] > 180 + 360 do
+  begin
+    c.ReferencePointWGS84[rpBottomLeft][0] := c.ReferencePointWGS84[rpBottomLeft][0] - 360;
+    c.ReferencePointWGS84[rpTopRight][0] := c.ReferencePointWGS84[rpTopRight][0] - 360;
+  end;
+
+  if c.ReferencePointWGS84[rpTopRight][0] > 180 then
+  begin
+    //render cyllinder
+    c1 := c.CopyContainer;
+    c2 := c.CopyContainer;
+
+    c1.ReferencePointImage[rpTopRight][0] := c.LongtitudeToX(180);
+    c1.ReferencePointWGS84[rpTopRight][0] := 180;
+
+    c2.ReferencePointImage[rpBottomLeft][0] := c.LongtitudeToX(180);
+    c2.ReferencePointWGS84[rpBottomLeft][0] := 180;
+    c2.ReferencePointImage[rpTopRight][0] := c.ReferencePointImage[rpTopRight][0] - c.ImageWidth;
+    c2.ReferencePointWGS84[rpTopRight][0] := c.ReferencePointWGS84[rpTopRight][0] - 360;
+
+    DrawCore(c1);
+    DrawCore(c2);
+
+    FreeAndNil(c1);
+    FreeAndNil(c2);
+  end
+  else
+    DrawCore(c);
+
+  FreeAndNil(c);
 end;
 
 end.

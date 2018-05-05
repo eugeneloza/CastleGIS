@@ -6,7 +6,7 @@ This is summary of efforts required for my scientific research. This includes di
 
 With hope that it will also might be useful for Castle Game Engine GIS - like applications. Yes, that's a game engine, it doesn't need to have fancy GIS features.
 
-# What's the goal? (why)
+# What's the goal? (Why?)
 
 First of all, I need such module for my scientific work to make some specific calculations on geographical statistics of some extreme natural phenomenon (earthquakes and tornadoes) and analyze the risk they pose to ecology, people and industry, create visual materials for scientific papers. This also means I'm officially allowed to do this during work hours :)
 
