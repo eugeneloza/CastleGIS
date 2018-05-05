@@ -45,18 +45,28 @@ type
     function isWithinTime(const aTime1, aTime2: TDateTime): boolean;
   end;
 
+type
+  TReferencePointType = (rpBottomLeft, rpTopRight);
 
 type
-  TBaseMap = class(TObject)
+  TWGS84Rectangle = class(TObject)
+  public
+    { Link between coordinates and WGS84 geographical coordinates
+      [rpBottomLeft] should be Bottom-Left coordinate of the image and
+      [rpTopRight] should be Top-Right coordinate of the image
+      Otherwise the image will be drawn inversed }
+    ReferencePointImage: array [TReferencePointType] of TVector2Integer;
+    ReferencePointWGS84: array [TReferencePointType] of TVector2;
+  end;
+
+type
+  TBaseMap = class(TWGS84Rectangle)
   strict private
     MapImage: TGLImage;
   public
-    { Link between coordinates and WGS84 geographical coordinates
-      [0] should be Bottom-Left coordinate of the image and
-      [1] should be Top-Right coordinate of the image
-      Otherwise the image will be drawn inversed }
-    ReferencePointImage: array [0..1] of TVector2Integer;
-    ReferencePointWGS84: array [0..1] of TVector2;
+    { Draw the Base map scaled against TWGS84Rectangle
+      Both BaseMap and Container must be correctly geo-aligned }
+    procedure Draw(Container: TWGS84Rectangle);
   public
     constructor Create(const aURL: string);
     destructor Destroy; override;
@@ -231,8 +241,18 @@ end;
 
 destructor TBaseMap.Destroy;
 begin
-
+  FreeAndNil(MapImage);
   inherited Destroy;
+end;
+
+procedure TBaseMap.Draw(Container: TWGS84Rectangle);
+//var
+begin
+{  ReferencePointImage: array [TReferencePointType] of TVector2Integer;
+  ReferencePointWGS84: array [TReferencePointType] of TVector2;}
+  {(const X, Y, DrawWidth, DrawHeight: Single;
+      const ImageX, ImageY, ImageWidth, ImageHeight: Single);}
+  MapImage.Draw;//()
 end;
 
 end.
