@@ -135,82 +135,39 @@ uses
 
 function TTimedObject.isTime(const aTime: TDateTime): boolean;
 begin
-  if (FTime + FTimeError >= aTime) and (FTime - FTimeError <= aTime) then
-    Result := true
-  else
-    Result := false;
+  Result := (FTime + FTimeError >= aTime) and (FTime - FTimeError <= aTime);
 end;
 
 function TTimedObject.isWithinTime(const aTime1, aTime2: TDateTime): boolean;
 begin
   if aTime2 > aTime1 then
-  begin
-    if (FTime + FTimeError >= aTime1) and (FTime - FTimeError <= aTime2) then
-      Result := true
-    else
-      Result := false;
-  end
+    Result := (FTime + FTimeError >= aTime1) and (FTime - FTimeError <= aTime2)
   else
-  begin
-    if (FTime + FTimeError >= aTime2) and (FTime - FTimeError <= aTime1) then
-      Result := false
-    else
-      Result := true;
-  end;
+    Result := (FTime + FTimeError >= aTime2) and (FTime - FTimeError <= aTime1);
 end;
 
 function TGeoObject.isWithinDepth(const aValue1, aValue2: single): boolean;
 begin
   if aValue2 > aValue1 then
-  begin
-    if (FDepth + FDepthError >= aValue1) and (FDepth - FDepthError <= aValue2) then
-      Result := true
-    else
-      Result := false;
-  end
+    Result := (FDepth + FDepthError >= aValue1) and (FDepth - FDepthError <= aValue2)
   else
-  begin
-    if (FDepth + FDepthError >= aValue2) and (FDepth - FDepthError <= aValue1) then
-      Result := true
-    else
-      Result := false;
-  end;
+    Result := (FDepth + FDepthError >= aValue2) and (FDepth - FDepthError <= aValue1);
 end;
 
 function TGeoObject.isWithinLatitude(const aValue1, aValue2: single): boolean;
 begin
   if aValue2 > aValue1 then
-  begin
-    if (FLatitude + FHorizontalError/Latitude_to_km_ratio >= aValue1) and (FLatitude - FHorizontalError/Latitude_to_km_ratio <= aValue2) then
-      Result := true
-    else
-      Result := false;
-  end
+    Result := (FLatitude + FHorizontalError/Latitude_to_km_ratio >= aValue1) and (FLatitude - FHorizontalError/Latitude_to_km_ratio <= aValue2)
   else
-  begin
-    if (FLatitude + FHorizontalError/Latitude_to_km_ratio >= aValue2) and (FLatitude - FHorizontalError/Latitude_to_km_ratio <= aValue1) then
-      Result := true
-    else
-      Result := false;
-  end;
+    Result := (FLatitude + FHorizontalError/Latitude_to_km_ratio >= aValue2) and (FLatitude - FHorizontalError/Latitude_to_km_ratio <= aValue1);
 end;
 
 function TGeoObject.isWithinLongtitude(const aValue1, aValue2: single): boolean;
 begin
   if aValue2 > aValue1 then
-  begin
-    if (FLongtitude + FHorizontalError/Latitude_to_km_ratio >= aValue1) and (FLongtitude - FHorizontalError/Latitude_to_km_ratio <= aValue2) then
-      Result := true
-    else
-      Result := false;
-  end
+    Result := (FLongtitude + FHorizontalError/Latitude_to_km_ratio >= aValue1) and (FLongtitude - FHorizontalError/Latitude_to_km_ratio <= aValue2)
   else
-  begin
-    if (FLongtitude + FHorizontalError/Latitude_to_km_ratio >= aValue2) and (FLongtitude - FHorizontalError/Latitude_to_km_ratio <= aValue1) then
-      Result := true
-    else
-      Result := false;
-  end;
+    Result := (FLongtitude + FHorizontalError/Latitude_to_km_ratio >= aValue2) and (FLongtitude - FHorizontalError/Latitude_to_km_ratio <= aValue1);
 end;
 
 procedure TGeoObject.ParseLatitude(const aData: string);
@@ -239,7 +196,7 @@ var
 begin
   LngDiff := aLongtitude - Self.FLongtitude;
   while LngDiff > 180 do
-    LngDiff -= 360
+    LngDiff -= 360;
   while LngDiff < -180 do
     LngDiff += 360;
 
