@@ -157,17 +157,17 @@ end;
 function TGeoObject.isWithinLatitude(const aValue1, aValue2: single): boolean;
 begin
   if aValue2 > aValue1 then
-    Result := (FLatitude + FHorizontalError/Latitude_to_km_ratio >= aValue1) and (FLatitude - FHorizontalError/Latitude_to_km_ratio <= aValue2)
+    Result := (FLatitude + FHorizontalError / Latitude_to_km_ratio >= aValue1) and (FLatitude - FHorizontalError / Latitude_to_km_ratio <= aValue2)
   else
-    Result := (FLatitude + FHorizontalError/Latitude_to_km_ratio >= aValue2) and (FLatitude - FHorizontalError/Latitude_to_km_ratio <= aValue1);
+    Result := (FLatitude + FHorizontalError / Latitude_to_km_ratio >= aValue2) and (FLatitude - FHorizontalError / Latitude_to_km_ratio <= aValue1);
 end;
 
 function TGeoObject.isWithinLongtitude(const aValue1, aValue2: single): boolean;
 begin
   if aValue2 > aValue1 then
-    Result := (FLongtitude + FHorizontalError/Latitude_to_km_ratio >= aValue1) and (FLongtitude - FHorizontalError/Latitude_to_km_ratio <= aValue2)
+    Result := (FLongtitude + FHorizontalError / Latitude_to_km_ratio >= aValue1) and (FLongtitude - FHorizontalError / Latitude_to_km_ratio <= aValue2)
   else
-    Result := (FLongtitude + FHorizontalError/Latitude_to_km_ratio >= aValue2) and (FLongtitude - FHorizontalError/Latitude_to_km_ratio <= aValue1);
+    Result := (FLongtitude + FHorizontalError / Latitude_to_km_ratio >= aValue2) and (FLongtitude - FHorizontalError / Latitude_to_km_ratio <= aValue1);
 end;
 
 procedure TGeoObject.ParseLatitude(const aData: string);
